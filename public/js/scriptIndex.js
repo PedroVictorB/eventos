@@ -11,8 +11,29 @@ $(document).ready(function () {
         type: "POST",
         data: {limite: limite},
         url: "evento/buscar",
-        success: function (result) {
-            $("#lista_de_eventos").html(result);
+        dataType: 'json',
+        success: function (evento) {
+            $texto = "";
+            for (var i = 0; i < evento.length; i++) {
+                $texto = $texto
+                        + "<div class=\"panel panel-default\">"
+                        + "<a class=\"btn btn-dark\" id=\"deletar\" style=\"float:right\" value=\"" + evento[i].id + "\">Deletar</a>"
+                        + "<button class=\"btn btn-dark\" id=\"editar\" style=\"float:right\" value=\"" + evento[i].id + "\">Editar</button>"
+                        + "<div class=\"panel-heading\">"
+                        + "<p id=\"id_evento\" style=\"float:left\">" + evento[i].id + "</p>"
+                        + "<h3 class=\"panel-title\">" + evento[i].titulo + "</h3>"
+                        + "</div>"
+                        + "<div class=\"panel-body\">"
+                        + "Descrição: " + evento[i].descricao + "<br/>"
+                        + "Data: " + evento[i].data + "<br/>"
+                        + "Email: " + evento[i].email + "<br/>"
+                        + "</div>"
+                        + "<div class=\"panel-footer\">"
+                        + "" + evento[i].local + ""
+                        + "</div>"
+                        + "</div>";
+            }
+            $("#lista_de_eventos").html($texto);
         },
         beforeSend: function () {
             $('#loading').css({display: "block"});
@@ -85,9 +106,55 @@ $(document).on("click", "#editar", function (e) {
     $.ajax({
         type: "POST",
         data: {valor: valor},
-        url: "evento/form",
-        success: function (result) {
-            $("#evento_update").html(result);
+        url: "evento/read",
+        dataType: 'json',
+        success: function (evento) {
+            $texto =
+                    "<h2>Edite o evento</h2>"
+                    + "<button class=\"btn btn-dark\" id=\"fechar_editar\" style=\"float:right\" value=\"" + evento[0].id + "\">Fechar</button>"
+                    + "<form role=\"form\" class=\"col-md-40 col-md-offset-4\">"
+                    + "<div class=\"col-lg-6\">"
+                    + "<div class=\"well well-sm\"><strong style=\"color: #31b0d5\"><span class=\"glyphicon glyphicon-asterisk\"></span>Preenchimento obrigatório!</strong></div>"
+                    + "<div class=\"form-group\">"
+                    + "<label for=\"nome\">Titulo</label>"
+                    + "<div class=\"input-group\">"
+                    + "<input type=\"text\" class=\"form-control\" name=\"editar_titulo\" id=\"titulo\" placeholder=\"Coloque o novo titulo aqui!\" value=\"" + evento[0].titulo + "\" required>"
+                    + "<span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-asterisk\"></span></span>"
+                    + "</div>"
+                    + "</div>"
+                    + "<div class=\"form-group\">"
+                    + "<label for=\"email\">Email</label>"
+                    + "<div class=\"input-group\">"
+                    + "<input type=\"email\" class=\"form-control\" id=\"email\" name=\"editar_email\" placeholder=\"Coloque o novo email aqui!\" value=\"" + evento[0].email + "\" required>"
+                    + "<span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-asterisk\"></span></span>"
+                    + "</div>"
+                    + "</div>"
+                    + "<div class=\"form-group\">"
+                    + "<label for=\"data\">Data e Hora</label>"
+                    + "<div class=\"input-group\">"
+                    + "<input type=\"datetime-local\" class=\"form-control\" name=\"editar_data\" id=\"data\" placeholder=\"Coloque a nova data!\" value=\"" + evento[0].data + "\" required>"
+                    + "<span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-asterisk\"></span></span>"
+                    + "</div>"
+                    + " </div>"
+                    + "<div class=\"form-group\">"
+                    + "<label for=\"local\">Local</label>"
+                    + "<div class=\"input-group\">"
+                    + "<input type=\"text\" class=\"form-control\" name=\"editar_local\" id=\"local\" placeholder=\"Coloque o novo local aqui!\" value=\"" + evento[0].local + "\" required>"
+                    + "<span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-asterisk\"></span></span>"
+                    + "</div>"
+                    + "</div>"
+                    + "<div class=\"form-group\">"
+                    + "<label for=\"descricao\">Descrição</label>"
+                    + "<div class=\"input-group\">"
+                    + "<textarea name=\"editar_descricao\" id=\"descricao\" class=\"form-control\" rows=\"5\" required>" + evento[0].descricao + "</textarea>"
+                    + "<span class=\"input-group-addon\"><span class=\"glyphicon glyphicon-asterisk\"></span></span>"
+                    + "</div>"
+                    + "</div>"
+                    + "<button type=\"submit\" value=\"" + evento[0].id + "\" id=\"botao_editar\" class=\"btn btn-warning\">Editar</button>"
+                    + "</div>"
+                    + "</form>";
+            $("#evento_update").html($texto);
+            location.href = "#evento_update";
         },
         beforeSend: function () {
             $('#loading').css({display: "block"});
