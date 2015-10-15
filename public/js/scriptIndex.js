@@ -7,44 +7,7 @@
 limite = 4;
 
 $(document).ready(function () {
-    $.ajax({
-        type: "POST",
-        data: {limite: limite},
-        url: "evento/buscar",
-        dataType: 'json',
-        success: function (evento) {
-            $texto = "";
-            for (var i = 0; i < evento.length; i++) {
-                $texto = $texto
-                        + "<div class=\"panel panel-default\">"
-                        + "<a class=\"btn btn-dark\" id=\"deletar\" style=\"float:right\" value=\"" + evento[i].id + "\">Deletar</a>"
-                        + "<button class=\"btn btn-dark\" id=\"editar\" style=\"float:right\" value=\"" + evento[i].id + "\">Editar</button>"
-                        + "<div class=\"panel-heading\">"
-                        + "<p id=\"id_evento\" style=\"float:left\">" + evento[i].id + "</p>"
-                        + "<h3 class=\"panel-title\">" + evento[i].titulo + "</h3>"
-                        + "</div>"
-                        + "<div class=\"panel-body\">"
-                        + "Descrição: " + evento[i].descricao + "<br/>"
-                        + "Data: " + evento[i].data + "<br/>"
-                        + "Email: " + evento[i].email + "<br/>"
-                        + "</div>"
-                        + "<div class=\"panel-footer\">"
-                        + "" + evento[i].local + ""
-                        + "</div>"
-                        + "</div>";
-            }
-            $("#lista_de_eventos").html($texto);
-        },
-        beforeSend: function () {
-            $('#loading').css({display: "block"});
-        },
-        complete: function (msg) {
-            $('#loading').css({display: "none"});
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            alert("Ocorreu um erro: " + errorThrown + " :(");
-        }
-    });
+    refresh_lista_de_eventos();
 });
 
 $(document).on("click", "#deletar", function () {
@@ -174,23 +137,14 @@ $(document).on("click", "#fechar_editar", function (e) {
 
 $("#mais").click(function (e) {
     limite += 4;
-    $.ajax({
-        type: "POST",
-        data: {limite: limite},
-        url: "evento/buscar",
-        success: function (result) {
-            $("#lista_de_eventos").html(result);
-        },
-        beforeSend: function () {
-            $('#loading').css({display: "block"});
-        },
-        complete: function (msg) {
-            $('#loading').css({display: "none"});
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            alert("Ocorreu um erro: " + textStatus + ":(");
-        }
-    });
+    refresh_lista_de_eventos();
+});
+
+$("#menos").click(function (e) {
+    if (limite >= 4) {
+        limite -= 4;
+        refresh_lista_de_eventos();
+    }
 });
 
 $("#botaoCadastrar").click(function (e) {
@@ -210,7 +164,6 @@ $("#botaoCadastrar").click(function (e) {
             refresh_lista_de_eventos();
             $("input[name=titulo]").val('');
             $("input[name=email]").val('');
-            $("input[name=email2]").val('');
             $("input[name=data]").val('');
             $("input[name=local]").val('');
             $("textarea[name=descricao]").val('');
@@ -232,8 +185,29 @@ function refresh_lista_de_eventos() {
         type: "POST",
         data: {limite: limite},
         url: "evento/buscar",
-        success: function (result) {
-            $("#lista_de_eventos").html(result);
+        dataType: 'json',
+        success: function (evento) {
+            $texto = "";
+            for (var i = 0; i < evento.length; i++) {
+                $texto = $texto
+                        + "<div class=\"panel panel-default\">"
+                        + "<a class=\"btn btn-dark\" id=\"deletar\" style=\"float:right\" value=\"" + evento[i].id + "\">Deletar</a>"
+                        + "<button class=\"btn btn-dark\" id=\"editar\" style=\"float:right\" value=\"" + evento[i].id + "\">Editar</button>"
+                        + "<div class=\"panel-heading\">"
+                        + "<p id=\"id_evento\" style=\"float:left\">" + evento[i].id + "</p>"
+                        + "<h3 class=\"panel-title\">" + evento[i].titulo + "</h3>"
+                        + "</div>"
+                        + "<div class=\"panel-body\">"
+                        + "Descrição: " + evento[i].descricao + "<br/>"
+                        + "Data: " + evento[i].data + "<br/>"
+                        + "Email: " + evento[i].email + "<br/>"
+                        + "</div>"
+                        + "<div class=\"panel-footer\">"
+                        + "" + evento[i].local + ""
+                        + "</div>"
+                        + "</div>";
+            }
+            $("#lista_de_eventos").html($texto);
         },
         beforeSend: function () {
             $('#loading').css({display: "block"});
